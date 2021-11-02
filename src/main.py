@@ -30,8 +30,24 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route('/user', methods=['GET','POST'])
+def handle_user():
+    if request.method == 'GET':
+        users = User.query.all()
+        return jsonify(users), 200
+    elif request.method == 'POST':
+        body = request.json
+        create_user = User.create(body)
+        if create_user is not None:
+            return jsonify(create_user.serialize()), 201
+        return jsonify({"Message": "User not created, try again"}), 400
+        
+
+
+
+
+
+
 
     response_body = {
         "msg": "Hello, this is your GET /user response "
