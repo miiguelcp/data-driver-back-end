@@ -46,8 +46,10 @@ def handle_user():
     elif request.method == 'POST':
         body = request.json
         print(body)
-        body['password'] = create_access_token(identity=body['password'])
-        print(body)
+        password = body['password'] 
+        salt = os.urandom(8).hex()
+        print(salt)
+        body['salt'] = salt
         create_user = User.create(body)
         if create_user is not None:
             return jsonify(create_user.serialize()), 201
