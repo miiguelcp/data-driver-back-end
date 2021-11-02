@@ -2,6 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import requests
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -14,7 +16,9 @@ from models import db, User
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
+app.config['JWT_SECRET_KEY'] = os.environ.get('FLASK_APP_KEY')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+jwt = JWTManager(app)
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
@@ -34,14 +38,22 @@ def sitemap():
 def handle_user():
     if request.method == 'GET':
         users = User.query.all()
-        return jsonify(users), 200
+        response = []
+        for user in users:
+            response.append(user.serialize())
+        return jsonify(response), 200
+
     elif request.method == 'POST':
         body = request.json
+        print(body)
+        body['password'] = create_access_token(identity=body['password'])
+        print(body)
         create_user = User.create(body)
         if create_user is not None:
             return jsonify(create_user.serialize()), 201
         return jsonify({"Message": "User not created, try again"}), 400
         
+
 
 
 

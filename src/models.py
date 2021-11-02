@@ -9,7 +9,7 @@ class User(db.Model):
     last_name = db.Column(db.String(120), unique=False, nullable=False)
     phone_number = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
+    password = db.Column(db.String(80), nullable=False)
 
 
     def __repr__(self):
@@ -31,6 +31,7 @@ class User(db.Model):
             new_user = cls(**ref_user)
             db.session.add(new_user)
             db.session.commit()
+            return new_user
         except Exception as error:
             db.session.rollback()
             print(error)
