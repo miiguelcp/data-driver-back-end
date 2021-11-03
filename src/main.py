@@ -51,7 +51,7 @@ def handle_user():
         salt = os.urandom(8).hex()
         print(salt)
         body['salt'] = salt
-        body['password'] = generate_password_hash(password)
+        body['password'] = generate_password_hash(salt + password)
         create_user = User.create(body)
         if create_user is not None:
             return jsonify(create_user.serialize()), 201
@@ -66,11 +66,11 @@ def user_login():
     if user_uno is None:
         # No se encontro el usuario
         return jsonify({"msg": "Something went wrong, please try again!"}), 401
-    #salt = user['salt']
-    password_hasheado = generate_password_hash(password)
-    if check_password_hash(password_hasheado, user_uno['password']):
-        access_token = create_access_token(identity=user.id)
-        return jsonify({ "token": access_token, "user_id": user.id, "user_first_name": user.first_name })
+    salt = user_uno.salt
+    # password_hasheado = generate_password_hash(password)
+    if check_password_hash(user_uno.password, salt + password):
+        access_token = create_access_token(identity=user_uno.id)
+        return jsonify({ "token": access_token, "user_id": user_uno.id, "user_first_name": user_uno.first_name })
     return jsonify({"msg": "Invalid password!"}), 401
 
 
