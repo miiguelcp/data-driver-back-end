@@ -4,6 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 import requests
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -50,13 +51,27 @@ def handle_user():
         salt = os.urandom(8).hex()
         print(salt)
         body['salt'] = salt
+        body['password'] = generate_password_hash(password)
         create_user = User.create(body)
         if create_user is not None:
             return jsonify(create_user.serialize()), 201
         return jsonify({"Message": "User not created, try again"}), 400
         
-
-
+@app.route('/login', methods=['POST'])
+def user_login():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    user_uno = User.query.filter_by(email=email).one_or_none()
+    #user.email != "test@test.com" or user.password != "test"
+    if user_uno is None:
+        # No se encontro el usuario
+        return jsonify({"msg": "Something went wrong, please try again!"}), 401
+    #salt = user['salt']
+    password_hasheado = generate_password_hash(password)
+    if check_password_hash(password_hasheado, user_uno['password']):
+        access_token = create_access_token(identity=user.id)
+        return jsonify({ "token": access_token, "user_id": user.id, "user_first_name": user.first_name })
+    return jsonify({"msg": "Invalid password!"}), 401
 
 
 
