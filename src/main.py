@@ -73,9 +73,9 @@ def user_login():
         return jsonify({ "token": access_token, "user_id": user_uno.id, "user_first_name": user_uno.first_name })
     return jsonify({"msg": "Invalid password!"}), 401
 
-@app.route('/user/edit', methods=['GET','PUT'])
-def edit_user_info():
-    
+# @app.route('/user/edit', methods=['GET','PUT'])
+# def edit_user_info():
+
 
 
 
