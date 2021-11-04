@@ -26,7 +26,21 @@ class User(db.Model):
             "salt":self.salt
             # do not serialize the password, its a security breach
         }
-
+    
+    def update(self, ref_user):
+        if "first_name" in ref_user:
+            self.first_name = ref_user["first_name"]
+        if "last_name" in ref_user:
+            self.last_name = ref_user["last_name"]
+        if "phone_number" in ref_user:
+            self.phone_number = ref_user["phone_number"]
+        try:
+            db.session.commit()
+            return True
+        except Exception as error:
+            db.session.rollback()
+            return False
+    
     @classmethod
     def create(cls, ref_user):
         try:

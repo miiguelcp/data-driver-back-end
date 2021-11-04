@@ -56,6 +56,25 @@ def handle_user():
         if create_user is not None:
             return jsonify(create_user.serialize()), 201
         return jsonify({"Message": "User not created, try again"}), 400
+
+@app.route('/user', methods=['PUT'])
+@jwt_required()
+def user_edit():
+    user_id = get_jwt_identity()
+    user = User.query.filter_by(id=user_id).one_or_none()
+    if user is not None:
+        updated = user.update(request.json)
+        if updated:
+            return jsonify(user.serialize()), 200
+        else:
+            return jsonify({"Message":"Something Happened, try again"}), 500
+    return jsonify({"Message":"User Not Found"}), 404
+
+        
+
+
+
+
         
 @app.route('/login', methods=['POST'])
 def user_login():
