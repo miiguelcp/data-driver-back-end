@@ -18,14 +18,15 @@ class User(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
             "first_name": self.first_name,
+            "id": self.id,
             "last_name": self.last_name,
             "phone_number": self.phone_number,
             "email": self.email,
             "salt":self.salt
-            # do not serialize the password, its a security breach
         }
+            # do not serialize the password, its a security breach
+        
     
     def update(self, ref_user):
         if "first_name" in ref_user:

@@ -70,8 +70,15 @@ def user_edit():
             return jsonify({"Message":"Something Happened, try again"}), 500
     return jsonify({"Message":"User Not Found"}), 404
 
-        
 
+
+
+@app.route('/perfil', methods=['GET'])
+@jwt_required()
+def handle_perfil():
+    id = get_jwt_identity()
+    user = User.query.filter_by(id=id).one_or_none()
+    return jsonify(user.serialize()), 200
 
 
 
@@ -90,6 +97,7 @@ def user_login():
     if check_password_hash(user_uno.password, salt + password):
         access_token = create_access_token(identity=user_uno.id)
         return jsonify({ "token": access_token, "user_id": user_uno.id, "user_first_name": user_uno.first_name })
+        print(user_id)
     return jsonify({"msg": "Invalid password!"}), 401
 
 # @app.route('/user/edit', methods=['GET','PUT'])
