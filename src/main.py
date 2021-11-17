@@ -152,7 +152,7 @@ def handle_users_travels():
         return jsonify(error.args), 500
 
 @app.route('/travel/<int:travel_id>', methods=['GET'])
-jwt_required (id=user_id)
+
 def handle_one_travel(travel_id):
     #response = requests.get()
     travel = Travel.query.filter_by(id=travel_id).one_or_none()
