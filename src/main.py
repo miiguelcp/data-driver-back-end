@@ -92,19 +92,18 @@ def user_login():
         return jsonify({ "token": access_token, "user_id": user_uno.id, "user_first_name": user_uno.first_name })
     return jsonify({"msg": "Invalid password!"}), 401
 
-# @app.route('/user/edit', methods=['GET','PUT'])
-# def edit_user_info():
+@app.route('/travel/<int:travel_id>', methods=['GET'])
+jwt_required (id=user_id)
+def handle_one_travel(travel_id):
+    #response = requests.get()
+    travel = Travel.query.filter_by(id=travel_id).one_or_none()
+    body = travel.json()
+    if travel is not None:
+        return jsonify(travel), 200
+    else:
+        return jsonify({"Message":"Travel Not Found"}), 400
 
 
-
-
-
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
