@@ -96,7 +96,6 @@ def user_login():
         print(user_id)
     return jsonify({"msg": "Invalid password!"}), 401
 
-<<<<<<< HEAD
 @app.route('/travel/<int:travel_id>', methods=['GET'])
 jwt_required (id=user_id)
 def handle_one_travel(travel_id):
@@ -107,11 +106,10 @@ def handle_one_travel(travel_id):
         return jsonify(travel), 200
     else:
         return jsonify({"Message":"Travel Not Found"}), 400
-=======
 
 @app.route('/travels', methods=['GET'])
 @jwt_required()
-def get_travel_user():
+def get_travel_user()
 
     user_id = get_jwt_identity()
     travels = Travel.query.filter_by(user_id=user_id)
@@ -153,10 +151,20 @@ def handle_users_travels():
         db.session.rollback()
         return jsonify(error.args), 500
 
+@app.route('/travel/<int:travel_id>', methods=['GET'])
+jwt_required (id=user_id)
+def handle_one_travel(travel_id):
+    #response = requests.get()
+    travel = Travel.query.filter_by(id=travel_id).one_or_none()
+    body = travel.json()
+    if travel is not None:
+        return jsonify(travel), 200
+    else:
+        return jsonify({"Message":"Travel Not Found"}), 400
+
 
 # @app.route('/user/edit', methods=['GET','PUT'])
-# def edit_user_info():
->>>>>>> da8bdbe61a410e13802ab1f5b7ab72e8d65048eb
+# def edit_user_info()
 
 
 
