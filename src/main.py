@@ -11,7 +11,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import Travel, db, User
 #from models import Person
 
 app = Flask(__name__)
@@ -70,12 +70,15 @@ def user_edit():
             return jsonify({"Message":"Something Happened, try again"}), 500
     return jsonify({"Message":"User Not Found"}), 404
 
-        
+
+@app.route('/perfil', methods=['GET'])
+@jwt_required()
+def handle_perfil():
+    id = get_jwt_identity()
+    user = User.query.filter_by(id=id).one_or_none()
+    return jsonify(user.serialize()), 200
 
 
-
-
-        
 @app.route('/login', methods=['POST'])
 def user_login():
     email = request.json.get('email', None)
@@ -90,8 +93,10 @@ def user_login():
     if check_password_hash(user_uno.password, salt + password):
         access_token = create_access_token(identity=user_uno.id)
         return jsonify({ "token": access_token, "user_id": user_uno.id, "user_first_name": user_uno.first_name })
+        print(user_id)
     return jsonify({"msg": "Invalid password!"}), 401
 
+<<<<<<< HEAD
 @app.route('/travel/<int:travel_id>', methods=['GET'])
 jwt_required (id=user_id)
 def handle_one_travel(travel_id):
@@ -102,6 +107,56 @@ def handle_one_travel(travel_id):
         return jsonify(travel), 200
     else:
         return jsonify({"Message":"Travel Not Found"}), 400
+=======
+
+@app.route('/travels', methods=['GET'])
+@jwt_required()
+def get_travel_user():
+
+    user_id = get_jwt_identity()
+    travels = Travel.query.filter_by(user_id=user_id)
+    response = list(map(
+        lambda travel: travel.serialize(),
+        travels
+    ))
+    return jsonify(response), 200
+
+@app.route('/details/<int:travel_id>', methods=['GET'])
+@jwt_required()
+def handle_details_travels(travel_id):
+    body = request.json
+
+@app.route('/travels', methods=['POST'])
+@jwt_required()
+def handle_users_travels():
+    user_id = get_jwt_identity()
+    initial_amount = request.json['initial_amount']
+    lodging = request.json['lodging']
+    food = request.json['food']
+    fuel = request.json['fuel']
+    toll = request.json['toll']
+    unexpected = request.json['unexpected']
+    new_travel = Travel(
+        user_id=user_id,
+        initial_amount= initial_amount,
+        lodging= lodging,
+        food= food,
+        fuel= fuel,
+        toll= toll,
+        unexpected= unexpected,
+    )
+    db.session.add(new_travel)
+    try:
+        db.session.commit()
+        return jsonify(new_travel.serialize()), 201
+    except Exception as error:
+        db.session.rollback()
+        return jsonify(error.args), 500
+
+
+# @app.route('/user/edit', methods=['GET','PUT'])
+# def edit_user_info():
+>>>>>>> da8bdbe61a410e13802ab1f5b7ab72e8d65048eb
 
 
 
