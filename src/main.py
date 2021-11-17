@@ -113,8 +113,6 @@ def get_travel_user():
 @jwt_required()
 def handle_details_travels(travel_id):
     body = request.json
-    if response.status_code == 200:
-
 
 @app.route('/travels', methods=['POST'])
 @jwt_required()
