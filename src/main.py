@@ -98,6 +98,7 @@ def user_login():
 
 @app.route('/travel/<int:travel_id>', methods=['GET'])
 @jwt_required ()
+
 def handle_one_travel(travel_id):
     user_id = get_jwt_identity()
     #response = requests.get()
@@ -164,8 +165,6 @@ def handle_onee_travel(travel_id):
         return jsonify({"Message":"Travel Not Found"}), 400
 
 
-# @app.route('/user/edit', methods=['GET','PUT'])
-# def edit_user_info()
 
 
 
